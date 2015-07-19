@@ -1,0 +1,17 @@
+[
+    {
+        "nativeWord" : "Helicopter",
+        "foreignWord" : "ヘリコプター",
+        "image" : "helicopter.jpg"
+    },
+    {
+        "nativeWord" : "Pluto",
+        "foreignWord" : "冥王星",
+        "image" : "pluto.jpg"
+    },
+    {
+        "nativeWord" : "University",
+        "foreignWord" : "大学",
+        "image" : "university.jpg"
+    }
+]
