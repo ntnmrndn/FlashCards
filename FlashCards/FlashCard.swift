@@ -4,10 +4,8 @@ import CoreData
 @objc(FlashCard)
 class FlashCard: _FlashCard {
     var imageURL: NSURL {
-        return NSURL(string: "http://0.0.0.0:3000/\(image!)")!
+        return NSURL(string: APIManager.imageURL(image!))!
     }
-
-
     static func flashCardFromJSON(JSON: Dictionary<String, String>) -> FlashCard {
         var flashCard = FlashCard.MR_createEntity()
         flashCard.image = JSON["image"]

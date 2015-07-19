@@ -10,6 +10,7 @@ enum UserAttributes: String {
 
 enum UserRelationships: String {
     case favorites = "favorites"
+    case scores = "scores"
 }
 
 @objc
@@ -53,6 +54,9 @@ class _User: NSManagedObject {
     @NSManaged
     var favorites: NSSet
 
+    @NSManaged
+    var scores: NSSet
+
 }
 
 extension _User {
@@ -79,6 +83,34 @@ extension _User {
         let mutable = self.favorites.mutableCopy() as NSMutableSet
         mutable.removeObject(value)
         self.favorites = mutable.copy() as NSSet
+    }
+
+}
+
+extension _User {
+
+    func addScores(objects: NSSet) {
+        let mutable = self.scores.mutableCopy() as NSMutableSet
+        mutable.unionSet(objects)
+        self.scores = mutable.copy() as NSSet
+    }
+
+    func removeScores(objects: NSSet) {
+        let mutable = self.scores.mutableCopy() as NSMutableSet
+        mutable.minusSet(objects)
+        self.scores = mutable.copy() as NSSet
+    }
+
+    func addScoresObject(value: Score!) {
+        let mutable = self.scores.mutableCopy() as NSMutableSet
+        mutable.addObject(value)
+        self.scores = mutable.copy() as NSSet
+    }
+
+    func removeScoresObject(value: Score!) {
+        let mutable = self.scores.mutableCopy() as NSMutableSet
+        mutable.removeObject(value)
+        self.scores = mutable.copy() as NSSet
     }
 
 }

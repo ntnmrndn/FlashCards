@@ -41,13 +41,14 @@ struct R {
     struct main {
       static var initialViewController: FlashCards.FlashCardViewController? { return instance.instantiateInitialViewController() as? FlashCards.FlashCardViewController }
       static var instance: UIStoryboard { return UIStoryboard(name: "Main", bundle: nil) }
+      static var loginViewController: FlashCards.LoginViewController? { return instance.instantiateViewControllerWithIdentifier("LoginViewController") as? FlashCards.LoginViewController }
       
       static func validateImages() {
         
       }
       
       static func validateViewControllers() {
-        
+        assert(loginViewController != nil, "[R.swift] ViewController with identifier 'loginViewController' could not be loaded from storyboard 'Main' as 'FlashCards.LoginViewController'.")
       }
     }
   }
@@ -118,8 +119,8 @@ extension UICollectionView {
   func registerNibs<T: NibResource where T: Reusable, T.T: UICollectionViewCell>(nibResources: [T]) {
     nibResources.map(registerNib)
   }
-  
-  func registerNibs<T: NibResource where T: Reusable, T.T: UICollectionReusableView>(nibResources: [T]) {
-    nibResources.map(registerNib)
-  }
+    //Fixup R
+//  func registerNibs<T: NibResource where T: Reusable, T.T: UICollectionReusableView>(nibResources: [T]) {
+//    nibResources.map(registerNib)
+//  }
 }

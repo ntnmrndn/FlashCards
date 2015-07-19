@@ -8,4 +8,4 @@ pod 'R.swift'
 pod 'XCGLogger'
 pod 'MagicalRecord'
 pod 'HanekeSwift'
-pod "MDCSwipeToChoose"
+pod 'MDCSwipeToChoose'

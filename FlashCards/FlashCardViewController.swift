@@ -9,45 +9,43 @@
 import UIKit
 import Haneke
 import MDCSwipeToChoose
+import CoreData
 
 class FlashCardViewController: UIViewController, MDCSwipeToChooseDelegate {
-    @IBOutlet var foreignWordLabel: UILabel! //XXX migrate to xib ?
+    @IBOutlet var foreignWordLabel: UILabel!
     @IBOutlet var nativeWordLabel: UILabel!
     @IBOutlet var imageView: UIImageView!
     @IBOutlet var hideVisualEffect: UIVisualEffectView!
     @IBOutlet var finishView: UIView!
+    @IBOutlet var favoriteSwitch: UISwitch!
 
-    var flashCards: [FlashCard]! //XXX better use of memory, can't make it const because would be instantiated before core data setup
+    var flashCards: [FlashCard]! //XXX should have better use of memory, can't make it const because would be instantiated before core data setup
     var currentCard: FlashCard!
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
         flashCards = FlashCard.MR_findAll() as! [FlashCard]
-//        var options = MDCSwipeToChooseViewOptions()
-//        options.delegate = self
-//        options.likedText = "Remembered"
-//        options.likedColor = UIColor.blueColor()
-//        options.nopeText = "Forgot"
-//        options.onPan = { state -> Void in
-//            if state.thresholdRatio != 1 {
-//                return
-//            }
-//            if state.direction == MDCSwipeDirection.Left {
-//                self.userForgot()
-//            } else if state.direction == MDCSwipeDirection.Right {
-//                self.userRemembered()
-//            }
-//        }
-//        var view = MDCSwipeToChooseView(frame: self.view.bounds, options: options)
-//        view.imageView.image = UIImage(named: "photo.png")
-        self.view.addSubview(view)
+        Notification.userLoggedIn.addObserver(self, selector: "nextCard")
     }
 
 
+    deinit {
+        Notification.removeObserver(self)
+    }
+
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(true)
+        if User.currentUser == nil {
+            let loginViewController = R.storyboard.main.loginViewController!
+            presentViewController(loginViewController, animated: true, completion: nil)
+        } else {
+            nextCard()
+        }
+    }
+
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-           nextCard()
     }
 
 
@@ -60,12 +58,25 @@ class FlashCardViewController: UIViewController, MDCSwipeToChooseDelegate {
      }
 
 
+    func setupFavorite(isFavorite: Bool) {
+        favoriteSwitch.on = isFavorite
+    }
+
+
+    @IBAction func toggleFavorite() {
+        Favorite.changeFavorite(currentCard, isFavorite: favoriteSwitch.on)
+        NSManagedObjectContext.MR_defaultContext().MR_saveToPersistentStoreAndWait()
+    }
+
+
     @IBAction func userRemembered() {
+        //XXX  Score.changeScoreFor(User.currentUser!, card: currentCard, success: true)
         nextCard()
     }
 
 
     @IBAction func userForgot() {
+        //XXX   Score.changeScoreFor(User.currentUser!, card: currentCard, success: false)
         nextCard()
     }
 
@@ -77,6 +88,7 @@ class FlashCardViewController: UIViewController, MDCSwipeToChooseDelegate {
         nativeWordLabel.text = currentCard.nativeWord
         foreignWordLabel.text = currentCard.foreignWord
         imageView.hnk_setImageFromURL(currentCard.imageURL)
+        setupFavorite(Favorite.isFavorite(currentCard))
     }
 }
 
